@@ -50,8 +50,3 @@ class AWS(BotPlugin):
     def stop_instance(self, id):
         i = self.ec2.instances.filter(InstanceIds=[id]).stop()
 
-
-if __name__ == '__main__':
-    a = AWS()
-    a.list_instances()
-
