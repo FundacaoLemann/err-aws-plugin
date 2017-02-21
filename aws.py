@@ -18,7 +18,7 @@ class AWS(BotPlugin):
                 return tag['Value'] 
 
     @botcmd
-    def list_instances(self):
+    def aws_instances(self, msg, args):
         instances = self.ec2.instances.all()
         for i in instances:
             name = self._get_instance_name(i)
