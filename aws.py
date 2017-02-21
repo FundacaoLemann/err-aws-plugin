@@ -8,7 +8,8 @@ class AWS(BotPlugin):
     """
     Very simple AWS plugin
     """
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
+        super(AWS, self).__init__(*args, **kwargs)
         self.ec2 = boto3.resource("ec2", region_name="us-west-2")
 
     def _get_instance_name(self, instance):
