@@ -1,0 +1,9 @@
+[Core]
+Name = AWS Plugin 
+Module = aws
+
+[Documentation]
+Description = AWS plugin
+
+[Python]
+Version = 3
