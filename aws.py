@@ -11,6 +11,25 @@ class AWS(BotPlugin):
     def __init__(self, *args, **kwargs):
         super(AWS, self).__init__(*args, **kwargs)
         self.ec2 = boto3.resource("ec2", region_name="us-west-2")
+        self.permitted_instances = []
+
+    @botcmd(admin_only = True)
+    def aws_addpermission(self, msg, args):
+        """
+        Includes instance id in permitted list.
+        """
+        id = args
+        self.permitted_instances.append(id)
+        return "Instance {} added to permitted list".format(id)
+
+    @botcmd(admin_only = True)
+    def aws_removepermission(self, msg, args):
+        """
+        Removes instance id from permitted list.
+        """
+        id = args
+        self.permitted_instances.remove(id)
+        return "Instance {} removed from permitted list".format(id)
 
     def _get_instance_name(self, instance):
         for tag in instance.tags:
@@ -31,6 +50,24 @@ class AWS(BotPlugin):
                 state=i.state['Name'],
                 id=i.id,
                 type=i.instance_type)
+
+    @botcmd
+    def aws_stop(self, msg, args):
+        """
+        Stop instance by id.
+        """
+        id = args
+        i = self.ec2.instances.filter(InstanceIds=[id]).stop()
+        return i
+
+    @botcmd
+    def aws_start(self, msg, args):
+        """
+        Start instance by id.
+        """
+        id = args
+        i = self.ec2.instances.filter(InstanceIds=[id]).start()
+        return i
 
     def list_instances_by_status(self, status):
         """
@@ -56,9 +93,3 @@ class AWS(BotPlugin):
     def aws_terminate(self, id):
         i = self.ec2.instances.filter(InstanceIds=[id]).terminate()
 
-    def stop_instance(self, id):
-        i = self.ec2.instances.filter(InstanceIds=[id]).stop()
-
-    def start_instance(self, id):
-        i = self.ec2.instances.filter(InstanceIds=[id]).start()
-        return i
