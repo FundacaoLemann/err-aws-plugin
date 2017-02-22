@@ -47,7 +47,7 @@ class AWS(BotPlugin):
         self.permitted_instances.remove(id)
         return "Instance {} removed from permitted list".format(id)
 
-   @botcmd
+    @botcmd
     def aws_instances(self, msg, args):
         """
         List all AWS instances.
