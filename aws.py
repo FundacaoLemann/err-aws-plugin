@@ -25,7 +25,7 @@ class AWS(BotPlugin):
         instances = self.ec2.instances.all()
         for i in instances:
             name = self._get_instance_name(i)
-            yield "*Name:* {name} | *IP:* {ip} | *State:* {state} | *ID:* {id} | *Instance Type:* {type}".format(
+            yield "**Name:** {name} | **IP:** {ip} | **State:** {state} | **ID:** {id} | **Instance Type:** {type}".format(
                 name=name,
                 ip=i.public_ip_address,
                 state=i.state['Name'],
