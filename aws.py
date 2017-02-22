@@ -69,7 +69,7 @@ class AWS(BotPlugin):
         """
         id = args
         response = ""
-        if self.is_instance_permitted(id):
+        if self._is_instance_permitted(id):
             i = self.ec2.instances.filter(InstanceIds=[id]).stop()
             reponse = "Instance {} stopped".format(self._get_instance_name(id))
         else:
@@ -83,7 +83,7 @@ class AWS(BotPlugin):
         """
         id = args
         response = ""
-        if self.is_instance_permitted(id);
+        if self._is_instance_permitted(id);
             i = self.ec2.instances.filter(InstanceIds=[id]).start()
             response = "Instance {} started".format(self._get_instance_name(id))
         else:
