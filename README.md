@@ -17,5 +17,5 @@ Usage
 Simple example usage
 
 ```
-!aws list_instances
+!aws instances
 ```
