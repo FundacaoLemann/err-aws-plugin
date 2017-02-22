@@ -60,5 +60,5 @@ class AWS(BotPlugin):
         i = self.ec2.instances.filter(InstanceIds=[id]).stop()
 
     def start_instance(self, id):
-        i = self.ec2.instances.filter(InstanceIds=[id]]).start()
+        i = self.ec2.instances.filter(InstanceIds=[id]).start()
         return i
