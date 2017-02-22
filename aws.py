@@ -8,10 +8,11 @@ class AWS(BotPlugin):
     """
     Very simple AWS plugin
     """
+    permitted_instances = []
+
     def __init__(self, *args, **kwargs):
         super(AWS, self).__init__(*args, **kwargs)
         self.ec2 = boto3.resource("ec2", region_name="us-west-2")
-        self.permitted_instances = []
 
     @botcmd(admin_only = True)
     def aws_addpermission(self, msg, args):
@@ -36,15 +37,25 @@ class AWS(BotPlugin):
             if tag['Key'] == 'Name':
                 return tag['Value'] 
 
+    def _is_instance_permitted(self, id):
+        """ 
+        Verifies if instance is in permitted instances list.
+        """
+        response = id in self.permitted_instances
+        return response
+
     @botcmd
     def aws_instances(self, msg, args):
         """
         List all AWS instances.
         """
         instances = self.ec2.instances.all()
+        yield  """**Permitted**	|**Name**	|**IP**	|**State**	|**ID**	|**Instance Type**"""
         for i in instances:
+            is_permitted = self._is_instance_permitted(i.id)
             name = self._get_instance_name(i)
-            yield "**Name:** {name} | **IP:** {ip} | **State:** {state} | **ID:** {id} | **Instance Type:** {type}".format(
+            yield "{permitted} | {name} | {ip} | {state} | {id} | {type}".format(
+                permitted=is_permitted,
                 name=name,
                 ip=i.public_ip_address,
                 state=i.state['Name'],
@@ -57,8 +68,13 @@ class AWS(BotPlugin):
         Stop instance by id.
         """
         id = args
-        i = self.ec2.instances.filter(InstanceIds=[id]).stop()
-        return i
+        response = ""
+        if self.is_instance_permitted(id):
+            i = self.ec2.instances.filter(InstanceIds=[id]).stop()
+            reponse = "Instance {} stopped".format(self._get_instance_name(id))
+        else:
+            response = "Instance not in permitted list. Use `aws addpermission ID` command."
+        return reponse
 
     @botcmd
     def aws_start(self, msg, args):
@@ -66,8 +82,13 @@ class AWS(BotPlugin):
         Start instance by id.
         """
         id = args
-        i = self.ec2.instances.filter(InstanceIds=[id]).start()
-        return i
+        response = ""
+        if self.is_instance_permitted(id);
+            i = self.ec2.instances.filter(InstanceIds=[id]).start()
+            response = "Instance {} started".format(self._get_instance_name(id))
+        else:
+            response = "Instance not in permitted list. Use `aws addpermission ID` command."
+        return response
 
     def list_instances_by_status(self, status):
         """
