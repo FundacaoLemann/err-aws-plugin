@@ -19,10 +19,18 @@ class AWS(BotPlugin):
 
     @botcmd
     def aws_instances(self, msg, args):
+        """
+        List all AWS instances.
+        """
         instances = self.ec2.instances.all()
         for i in instances:
             name = self._get_instance_name(i)
-            yield (name, i.public_ip_address, i.state['Name'], i.id, i.key_name, i.instance_type)
+            yield "*Name:* {name} | *IP:* {ip} | *State:* {state} | *ID:* {id} | *Instance Type:* {type}".format(
+                name=name,
+                ip=i.public_ip_address,
+                state=i.state['Name'],
+                id=i.id,
+                type=i.instance_type)
 
     def list_instances_by_status(self, status):
         """
@@ -45,9 +53,12 @@ class AWS(BotPlugin):
             MaxCount=1)
         return new
 
-    def terminate_instance(self, id):
+    def aws_terminate(self, id):
         i = self.ec2.instances.filter(InstanceIds=[id]).terminate()
 
     def stop_instance(self, id):
         i = self.ec2.instances.filter(InstanceIds=[id]).stop()
 
+    def start_instance(self, id):
+        i = self.ec2.instances.filter(InstanceIds=[id]]).start()
+        return i
